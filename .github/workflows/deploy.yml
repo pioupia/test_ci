@@ -49,11 +49,9 @@ jobs:
           echo "SSH_USER=${{ github.event.inputs.destination == 'prod' && secrets.VPS_PROD_USER || secrets.VPS_NPRD_USER }}" >> "$GITHUB_ENV"
           echo "SSH_PASSWORD=${{ github.event.inputs.destination == 'prod' && secrets.VPS_PROD_PASSWORD || secrets.VPS_NPRD_PASSWORD }}" >> "$GITHUB_ENV"
 
-      - name: Remove existing sshpass
+      - name: Add permission to restored cache binaries
         run: |
-          if [ -f /usr/bin/sshpass ]; then
-              sudo rm /usr/bin/sshpass
-          fi
+          sudo chmod +wx /usr/bin
 
       - name: Restore cached sshpass
         id: cache-sshpass-restore
