@@ -44,19 +44,17 @@ jobs:
           SSH_USER: ${{ env.SSH_USER }}
           SSH_PASSWORD: ${{ env.SSH_PASSWORD }}
         run: |
-          /usr/bin/sshpass -V
-          echo "$(echo "$NEW_VERSION")"
-          VERSIONS="$(ssh -o StrictHostKeyChecking=no "${{ env.SSH_USER }}@${{ env.SSH_HOST }}" "docker images | grep 'my-uuu/app-frontend-ssr' | awk '{ print \$2 }'" < .password)"
+          VERSIONS="$(ssh -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" "docker images | grep 'my-uuu/app-frontend-ssr' | awk '{ print \$2 }'" < .password)"
           while IFS= read -r VERSION; do
-              if [ "${{ env.NEW_VERSION }}" = "$VERSION" ]; then
-                  echo "Version ${{ env.NEW_VERSION }} already exists"
+              if [ "$NEW_VERSION" = "$VERSION" ]; then
+                  echo "Version $NEW_VERSION already exists"
                   exit 1
               fi
               if [ "$VERSION" = "latest" ]; then
                   continue
               fi
-              if ! semver "${{ env.NEW_VERSION }}" -r ">$VERSION" 2>&1 >/dev/null; then
-                  echo "Version ${{ env.NEW_VERSION }} is lower or equal than the last version $VERSION"
+              if ! semver "$NEW_VERSION" -r ">$VERSION" 2>&1 >/dev/null; then
+                  echo "Version $NEW_VERSION is lower or equal than the last version $VERSION"
                   exit 1
               fi
           done <<< "$VERSIONS"
