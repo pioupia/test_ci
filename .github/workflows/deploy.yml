@@ -68,6 +68,7 @@ jobs:
           SSH_USER: ${{ env.SSH_USER }}
           SSH_PASSWORD: ${{ env.SSH_PASSWORD }}
         run: |
+          /usr/bin/sshpass -V
           VERSIONS="$(/usr/bin/sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" $'docker images  | grep \'my-uuu/app-frontend-ssr\' | awk \'{ print $2 }\'')"
           while IFS= read -r VERSION; do
               if [ "$NEW_VERSION" = "$VERSION" ]; then
