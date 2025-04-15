@@ -64,7 +64,7 @@ jobs:
 
   cleaning:
     runs-on: ubuntu-latest
-    needs: [installer, verify-arguments]
+    needs: [verify-arguments]
     if: ${{ always() }}
     steps:
       - name: Cleanup
