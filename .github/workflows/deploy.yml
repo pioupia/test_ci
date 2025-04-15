@@ -58,7 +58,6 @@ jobs:
       - name: Restore cached sshpass
         id: cache-sshpass-restore
         uses: actions/cache/restore@v4
-        if: steps.cache-sshpass.outputs.cache-hit != 'true'
         with:
           path: /usr/bin/sshpass
           key: ${{ runner.os }}-sshpass-binary
