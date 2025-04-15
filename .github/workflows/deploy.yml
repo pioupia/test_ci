@@ -16,25 +16,8 @@ on:
         required: true
 
 jobs:
-  installer:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Cache sshpass
-        id: cache-sshpass
-        uses: actions/cache@v4
-        with:
-          path: /usr/bin/sshpass
-          key: ${{ runner.os }}-sshpass-binary
-
-      - name: Install sshpass
-        if: steps.cache-sshpass.outputs.cache-hit != 'true'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y sshpass
-
   verify-arguments:
     runs-on: ubuntu-latest
-    needs: installer
     steps:
       - name: Verify semver
         env:
@@ -43,28 +26,15 @@ jobs:
           sudo npm i -g semver
           semver "$NEW_VERSION" >/dev/null
 
+      - name: Save password
+        id: save-password
+        run: |
+          echo "${{ github.event.inputs.destination == 'prod' && secrets.VPS_PROD_PASSWORD || secrets.VPS_NPRD_PASSWORD }}" > .password
+
       - name: Choosing env keys
         run: |
           echo "SSH_HOST=${{ github.event.inputs.destination == 'prod' && secrets.VPS_PROD_HOST || secrets.VPS_NPRD_HOST }}" >> "$GITHUB_ENV"
           echo "SSH_USER=${{ github.event.inputs.destination == 'prod' && secrets.VPS_PROD_USER || secrets.VPS_NPRD_USER }}" >> "$GITHUB_ENV"
-          echo "SSH_PASSWORD=${{ github.event.inputs.destination == 'prod' && secrets.VPS_PROD_PASSWORD || secrets.VPS_NPRD_PASSWORD }}" >> "$GITHUB_ENV"
-
-      - name: Check if sshpass directory exists
-        id: check-sshpass
-        run: |
-          if [ -f "/usr/bin/sshpass" ]; then
-            echo "exists=true" >> $GITHUB_ENV
-          else
-            echo "exists=false" >> $GITHUB_ENV
-          fi
-
-      - name: Restore cached sshpass
-        if: env.exists == 'false'
-        id: cache-sshpass-restore
-        uses: actions/cache/restore@v4
-        with:
-          path: /usr/bin/sshpass
-          key: ${{ runner.os }}-sshpass-binary
 
       - name: Verify version logic
         env:
@@ -75,8 +45,8 @@ jobs:
           SSH_PASSWORD: ${{ env.SSH_PASSWORD }}
         run: |
           /usr/bin/sshpass -V
-          echo "${{ env.NEW_VERSION }}"
-          VERSIONS="$(/usr/bin/sshpass -p "${{ env.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no "${{ env.SSH_USER }}@${{ env.SSH_HOST }}" "docker images | grep 'my-uuu/app-frontend-ssr' | awk '{ print \$2 }'")"
+          echo "$(echo "$NEW_VERSION")"
+          VERSIONS="$(ssh -o StrictHostKeyChecking=no "${{ env.SSH_USER }}@${{ env.SSH_HOST }}" "docker images | grep 'my-uuu/app-frontend-ssr' | awk '{ print \$2 }'" < .password)"
           while IFS= read -r VERSION; do
               if [ "${{ env.NEW_VERSION }}" = "$VERSION" ]; then
                   echo "Version ${{ env.NEW_VERSION }} already exists"
