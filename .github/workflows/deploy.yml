@@ -50,8 +50,8 @@ jobs:
             echo "SSH_CUSTOM=$FIRST_SECRET" | tr -d 'E' >> double_password
             echo "THere we arrre"
           else
-            echo "SSH_HOST=$VPS_NPRD_HOST" >> "$GITHUB_ENV"
-            echo "SSH_USER=$VPS_NPRD_USER" >> "$GITHUB_ENV"
+            echo "SSH_HOST=${{ env.VPS_NPRD_HOST }}" >> "$GITHUB_ENV"
+            echo "SSH_USER=${{ env.VPS_NPRD_USER }}" >> "$GITHUB_ENV"
             echo "SSH_CUSTOM=$SECOND_SECRET" >> "$GITHUB_ENV"
             echo "SSH_CUSTOM=${{ env.SECOND_SECRET }}" | tr -d 'E' | base64 >> double_password
             echo "HEEEERE we arrre"
