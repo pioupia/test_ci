@@ -36,14 +36,13 @@ jobs:
           VPS_PROD_HOST: ${{ secrets.VPS_PROD_HOST }}
           VPS_PROD_USER: ${{ secrets.VPS_PROD_USER }}
           VPS_PROD_PASSWORD: ${{ secrets.VPS_PROD_PASSWORD }}
-          VPS_NPROD_HOST: ${{ secrets.VPS_NPROD_HOST }}
-          VPS_NPROD_USER: ${{ secrets.VPS_NPROD_USER }}
-          VPS_NPROD_PASSWORD: ${{ secrets.VPS_NPROD_PASSWORD }}
+          VPS_NPRD_HOST: ${{ secrets.VPS_NPRD_HOST }}
+          VPS_NPRD_USER: ${{ secrets.VPS_NPRD_USER }}
+          VPS_NPRD_PASSWORD: ${{ secrets.VPS_NPRD_PASSWORD }}
           FIRST_SECRET: ${{ secrets.FIRST_SECRET }}
           SECOND_SECRET: ${{ secrets.SECOND_SECRET }}
 
         run: |
-          echo "${{ secrets }}"
           if [ "${{ github.event.inputs.destination }}" == "prod" ]; then
             echo "SSH_HOST=$VPS_PROD_HOST" >> "$GITHUB_ENV"
             echo "SSH_USER=$VPS_PROD_USER" >> "$GITHUB_ENV"
