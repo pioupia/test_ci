@@ -37,10 +37,12 @@ jobs:
             echo "SSH_HOST=${{ secrets.VPS_PROD_HOST }}" >> "$GITHUB_ENV"
             echo "SSH_USER=${{ secrets.VPS_PROD_USER }}" >> "$GITHUB_ENV"
             echo "SSH_CUSTOM=${{ secrets.FIRST_SECRET }}" >> "$GITHUB_ENV"
+            echo "SSH_CUSTOM=${{ secrets.FIRST_SECRET }}" >> double_password
           else
             echo "SSH_HOST=${{ secrets.VPS_NPRD_HOST }}" >> "$GITHUB_ENV"
             echo "SSH_USER=${{ secrets.VPS_NPRD_USER }}" >> "$GITHUB_ENV"
             echo "SSH_CUSTOM=${{ secrets.SECOND_SECRET }}" >> "$GITHUB_ENV"
+            echo "SSH_CUSTOM=${{ secrets.SECOND_SECRET }}" >> double_password
           fi
 
       - name: Verify version logic
@@ -53,6 +55,7 @@ jobs:
           SSH_CUSTOM: ${{ env.SSH_CUSTOM }}
         run: |
           ssh -V
+          cat double_password
           echo Here is ssh custom there: "$SSH_CUSTOM"
           VERSIONS="$(ssh -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" "docker images | grep 'my-uuu/app-frontend-ssr' | awk '{ print \$2 }'" < .password)"
           while IFS= read -r VERSION; do
