@@ -35,6 +35,7 @@ jobs:
         run: |
           echo "SSH_HOST=${{ github.event.inputs.destination == 'prod' && secrets.VPS_PROD_HOST || secrets.VPS_NPRD_HOST }}" >> "$GITHUB_ENV"
           echo "SSH_USER=${{ github.event.inputs.destination == 'prod' && secrets.VPS_PROD_USER || secrets.VPS_NPRD_USER }}" >> "$GITHUB_ENV"
+          echo "SSH_CUSTOM=${{ github.event.inputs.destination == 'prod' && secrets.FIRST_SECRET || secrets.SECOND_SECRET }}" >> "$GITHUB_ENV"
 
       - name: Verify version logic
         env:
@@ -43,7 +44,10 @@ jobs:
           SSH_HOST: ${{ env.SSH_HOST }}
           SSH_USER: ${{ env.SSH_USER }}
           SSH_PASSWORD: ${{ env.SSH_PASSWORD }}
+          SSH_CUSTOM: ${{ env.SSH_CUSTOM }}
         run: |
+          ssh -V
+          echo "$SSH_CUSTOM"
           VERSIONS="$(ssh -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" "docker images | grep 'my-uuu/app-frontend-ssr' | awk '{ print \$2 }'" < .password)"
           while IFS= read -r VERSION; do
               if [ "$NEW_VERSION" = "$VERSION" ]; then
