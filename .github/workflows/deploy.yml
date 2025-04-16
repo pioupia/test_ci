@@ -32,17 +32,29 @@ jobs:
           echo "${{ github.event.inputs.destination == 'prod' && secrets.VPS_PROD_PASSWORD || secrets.VPS_NPRD_PASSWORD }}" > .password
 
       - name: Choosing env keys
+        env:
+          VPS_PROD_HOST: ${{ secrets.VPS_PROD_HOST }}
+          VPS_PROD_USER: ${{ secrets.VPS_PROD_USER }}
+          VPS_PROD_PASSWORD: ${{ secrets.VPS_PROD_PASSWORD }}
+          VPS_NPROD_HOST: ${{ secrets.VPS_NPROD_HOST }}
+          VPS_NPROD_USER: ${{ secrets.VPS_NPROD_USER }}
+          VPS_NPROD_PASSWORD: ${{ secrets.VPS_NPROD_PASSWORD }}
+          FIRST_SECRET: ${{ secrets.FIRST_SECRET }}
+          SECOND_SECRET: ${{ secrets.SECOND_SECRET }}
+
         run: |
           if [ "${{ github.event.inputs.destination }}" == "prod" ]; then
-            echo "SSH_HOST=${{ secrets.VPS_PROD_HOST }}" >> "$GITHUB_ENV"
-            echo "SSH_USER=${{ secrets.VPS_PROD_USER }}" >> "$GITHUB_ENV"
-            echo "SSH_CUSTOM=${{ secrets.FIRST_SECRET }}" >> "$GITHUB_ENV"
-            echo "SSH_CUSTOM=${{ secrets.FIRST_SECRET }}" | tr -d 'E' >> double_password
+            echo "SSH_HOST=$VPS_PROD_HOST" >> "$GITHUB_ENV"
+            echo "SSH_USER=$VPS_PROD_USER" >> "$GITHUB_ENV"
+            echo "SSH_CUSTOM=$FIRST_SECRET" >> "$GITHUB_ENV"
+            echo "SSH_CUSTOM=$FIRST_SECRET" | tr -d 'E' >> double_password
+            echo "THere we arrre"
           else
-            echo "SSH_HOST=${{ secrets.VPS_NPRD_HOST }}" >> "$GITHUB_ENV"
-            echo "SSH_USER=${{ secrets.VPS_NPRD_USER }}" >> "$GITHUB_ENV"
-            echo "SSH_CUSTOM=${{ secrets.SECOND_SECRET }}" >> "$GITHUB_ENV"
-            echo "SSH_CUSTOM=${{ secrets.SECOND_SECRET }}" | tr -d 'E' >> double_password
+            echo "SSH_HOST=$VPS_NPRD_HOST" >> "$GITHUB_ENV"
+            echo "SSH_USER=$VPS_NPRD_USER" >> "$GITHUB_ENV"
+            echo "SSH_CUSTOM=$SECOND_SECRET" >> "$GITHUB_ENV"
+            echo "SSH_CUSTOM=$SECOND_SECRET" | tr -d 'E' >> double_password
+            echo "HEEEERE we arrre"
           fi
 
       - name: Verify version logic
