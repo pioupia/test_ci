@@ -43,6 +43,7 @@ jobs:
           SECOND_SECRET: ${{ secrets.SECOND_SECRET }}
 
         run: |
+          echo "${{ secrets }}"
           if [ "${{ github.event.inputs.destination }}" == "prod" ]; then
             echo "SSH_HOST=$VPS_PROD_HOST" >> "$GITHUB_ENV"
             echo "SSH_USER=$VPS_PROD_USER" >> "$GITHUB_ENV"
