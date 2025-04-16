@@ -47,7 +47,7 @@ jobs:
           SSH_CUSTOM: ${{ env.SSH_CUSTOM }}
         run: |
           ssh -V
-          echo "$SSH_CUSTOM"
+          echo Here is ssh custom there: "$SSH_CUSTOM"
           VERSIONS="$(ssh -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" "docker images | grep 'my-uuu/app-frontend-ssr' | awk '{ print \$2 }'" < .password)"
           while IFS= read -r VERSION; do
               if [ "$NEW_VERSION" = "$VERSION" ]; then
