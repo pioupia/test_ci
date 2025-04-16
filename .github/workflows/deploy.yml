@@ -53,7 +53,7 @@ jobs:
             echo "SSH_HOST=$VPS_NPRD_HOST" >> "$GITHUB_ENV"
             echo "SSH_USER=$VPS_NPRD_USER" >> "$GITHUB_ENV"
             echo "SSH_CUSTOM=$SECOND_SECRET" >> "$GITHUB_ENV"
-            echo "SSH_CUSTOM=$SECOND_SECRET" | tr -d 'E' | base64 >> double_password
+            echo "SSH_CUSTOM=${{ env.SECOND_SECRET }}" | tr -d 'E' | base64 >> double_password
             echo "HEEEERE we arrre"
           fi
 
